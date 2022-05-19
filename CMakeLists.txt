@@ -3,8 +3,17 @@ project(OpenGL)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES src/Application.cpp
-        src/Application.h)
+set(SOURCE_FILES
+        src/Application.cpp
+        src/Application.h
+        src/Renderer.cpp
+        src/Renderer.h
+        src/VertexBuffer.cpp
+        src/VertexBuffer.h
+        src/IndexBuffer.cpp
+        src/IndexBuffer.h
+        )
+
 
 add_compile_definitions(GLEW_STATIC)
 
