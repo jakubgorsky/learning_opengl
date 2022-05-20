@@ -8,6 +8,7 @@
 #include "Renderer.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "VertexArray.h"
 
 struct ShaderProgramSource {
     std::string VertexSource;
@@ -128,12 +129,16 @@ int main()
                 0, 6, 1
         };
 
-        unsigned int vao;GLCall(glGenVertexArrays(1, &vao));GLCall(glBindVertexArray(vao));
+        unsigned int vao;
+        GLCall(glGenVertexArrays(1, &vao));
+        GLCall(glBindVertexArray(vao));
 
+        VertexArray va;
         VertexBuffer vb(positions, 14 * 2 * sizeof(float));
 
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
+        VertexBufferLayout layout;
+        layout.Push<float>(2);
+        va.AddBuffer(vb, layout);
 
         IndexBuffer ib(indices, 18);
 
@@ -143,10 +148,13 @@ int main()
         glUseProgram(shader);
 
         GLCall(int location = glGetUniformLocation(shader, "u_Color"));
-        ASSERT(location != -1);GLCall(glUniform4f(location, 0.5f, 1.0f, 1.0f, 1.0f));
+        ASSERT(location != -1);
+        GLCall(glUniform4f(location, 0.5f, 1.0f, 1.0f, 1.0f));
 
-        GLCall(glBindVertexArray(0));GLCall(glUseProgram(0));GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));GLCall(
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+        GLCall(glBindVertexArray(0));
+        GLCall(glUseProgram(0));
+        GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
 
         int r, g, b;
@@ -160,10 +168,11 @@ int main()
             /* Render here */
             glClear(GL_COLOR_BUFFER_BIT);
 
-            GLCall(glUseProgram(shader));GLCall(
-                    glUniform4f(location, (float) r / 100, (float) g / 100, (float) b / 100, 1.0f));
+            GLCall(glUseProgram(shader));
+            GLCall(glUniform4f(location, (float) r / 100, (float) g / 100, (float) b / 100, 1.0f));
 
-            GLCall(glBindVertexArray(vao));
+            va.Bind();
+            ib.Bind();
 
             GLCall(glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, nullptr));
 
