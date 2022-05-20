@@ -1,5 +1,5 @@
 //
-// Created by kubag on 19/05/2022.
+// Created by Jakub Górski on 19/05/2022.
 //
 
 #ifndef OPENGL_VERTEXBUFFER_H

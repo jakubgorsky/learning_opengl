@@ -1,5 +1,5 @@
 //
-// Created by kubag on 20/05/2022.
+// Created by Jakub Górski on 20/05/2022.
 //
 
 #ifndef OPENGL_VERTEXARRAY_H
