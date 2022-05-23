@@ -7,7 +7,7 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
-#include "ShaderHelperMethods.h"
+#include "Shader.h"
 
 int main()
 {
@@ -69,20 +69,15 @@ int main()
 
         IndexBuffer ib(indices, 18);
 
-        SHM::ShaderProgramSource source = SHM::ParseShader("../res/shaders/Basic.shader");
+        Shader shader("../res/shaders/Basic.shader");
+        shader.Bind();
 
-        unsigned int shader = SHM::CreateShader(source.VertexSource, source.FragmentSource);
-        glUseProgram(shader);
+        shader.SetUniform4f("u_Color", 0.5f, 1.0f, 1.0f, 1.0f);
 
-        GLCall(int location = glGetUniformLocation(shader, "u_Color"));
-        ASSERT(location != -1);
-        GLCall(glUniform4f(location, 0.5f, 1.0f, 1.0f, 1.0f));
-
-        GLCall(glBindVertexArray(0));
-        GLCall(glUseProgram(0));
-        GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
-        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-
+        va.Unbind();
+        shader.Unbind();
+        vb.Unbind();
+        ib.Unbind();
 
         int r, g, b;
         r = 100;
@@ -95,8 +90,8 @@ int main()
             /* Render here */
             glClear(GL_COLOR_BUFFER_BIT);
 
-            GLCall(glUseProgram(shader));
-            GLCall(glUniform4f(location, (float) r / 100, (float) g / 100, (float) b / 100, 1.0f));
+            shader.Bind();
+            shader.SetUniform4f("u_Color", (float) r / 100, (float) g / 100, (float) b / 100, 1.0f);
 
             va.Bind();
             ib.Bind();
@@ -124,8 +119,6 @@ int main()
             /* Poll for and process events */
             glfwPollEvents();
         }
-
-        glDeleteProgram(shader);
     }
     glfwTerminate();
     return 0;

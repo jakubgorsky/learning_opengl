@@ -16,8 +16,8 @@ set(SOURCE_FILES
         src/VertexArray.h
         src/VertexBufferLayout.cpp
         src/VertexBufferLayout.h
-        src/ShaderHelperMethods.cpp
-        src/ShaderHelperMethods.h
+        src/Shader.cpp
+        src/Shader.h
         )
 
 
