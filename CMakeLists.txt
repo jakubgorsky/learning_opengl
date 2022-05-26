@@ -18,6 +18,8 @@ set(SOURCE_FILES
         src/VertexBufferLayout.h
         src/Shader.cpp
         src/Shader.h
+        src/GLErrorHandler.cpp
+        src/GLErrorHandler.h
         )
 
 

@@ -2,8 +2,7 @@
 // Created by kubag on 23/05/2022.
 //
 
-#ifndef OPENGL_SHADER_H
-#define OPENGL_SHADER_H
+#pragma once
 
 #include <string>
 #include <GL/glew.h>
@@ -34,5 +33,3 @@ public:
     // set uniforms
     void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
 };
-
-#endif //OPENGL_SHADER_H

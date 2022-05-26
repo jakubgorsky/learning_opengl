@@ -1,22 +1,18 @@
 //
 // Created by kubag on 19/05/2022.
 //
-
-#ifndef OPENGL_RENDERER_H
-#define OPENGL_RENDERER_H
+#pragma once
 
 #include <GL/glew.h>
 
-#define ASSERT(x) if (!(x)) __debugbreak()
-#define GLCall(x); GLClearError(); x; ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-
-void GLClearError();
-
-bool GLLogCall(const char* function, const char* file, int line);
+#include "VertexArray.h"
+#include "Shader.h"
+#include "IndexBuffer.h"
 
 class Renderer {
+public:
+    void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
+    void Clear() const;
+private:
 
 };
-
-
-#endif //OPENGL_RENDERER_H

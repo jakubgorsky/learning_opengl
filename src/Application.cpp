@@ -14,8 +14,9 @@ int main()
     GLFWwindow* window;
 
     /* Initialize the library */
-    if (!glfwInit())
+    if (!glfwInit()) {
         return -1;
+    }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
@@ -79,6 +80,8 @@ int main()
         vb.Unbind();
         ib.Unbind();
 
+        Renderer renderer;
+
         int r, g, b;
         r = 100;
         g = 0;
@@ -88,13 +91,12 @@ int main()
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
             /* Render here */
-            glClear(GL_COLOR_BUFFER_BIT);
+            renderer.Clear();
 
             shader.Bind();
             shader.SetUniform4f("u_Color", (float) r / 100, (float) g / 100, (float) b / 100, 1.0f);
 
-            va.Bind();
-            ib.Bind();
+            renderer.Draw(va, ib, shader);
 
             GLCall(glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, nullptr));
 

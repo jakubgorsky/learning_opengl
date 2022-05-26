@@ -1,10 +1,7 @@
 //
 // Created by kubag on 19/05/2022.
 //
-
-#ifndef OPENGL_INDEXBUFFER_H
-#define OPENGL_INDEXBUFFER_H
-
+#pragma once
 
 class IndexBuffer {
 private:
@@ -19,7 +16,3 @@ public:
 
     inline unsigned int GetCount() const { return m_Count; }
 };
-
-
-
-#endif //OPENGL_INDEXBUFFER_H

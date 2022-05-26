@@ -1,10 +1,8 @@
 //
 // Created by kubag on 19/05/2022.
 //
-
 #include "VertexBuffer.h"
-
-#include "Renderer.h"
+#include "GLErrorHandler.h"
 
 VertexBuffer::VertexBuffer(const void *data, unsigned int size) {
     glGenBuffers(1, &m_RendererID);

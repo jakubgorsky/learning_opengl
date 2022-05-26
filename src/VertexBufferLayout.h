@@ -1,13 +1,11 @@
 //
 // Created by Jakub Górski on 20/05/2022.
 //
-
-#ifndef OPENGL_VERTEXBUFFERLAYOUT_H
-#define OPENGL_VERTEXBUFFERLAYOUT_H
+#pragma once
 
 #include <vector>
 #include <GL/glew.h>
-#include "Renderer.h"
+#include "GLErrorHandler.h"
 
 struct VertexBufferElement{
     unsigned int type;
@@ -36,7 +34,7 @@ public:
     void Push(GLint count){
     }
     inline std::vector<VertexBufferElement> GetElements() const& { return m_Elements; }
-    inline unsigned int GetStride() const { return m_Stride; }
+    inline GLsizei GetStride() const { return m_Stride; }
 };
 
 
@@ -58,6 +56,3 @@ inline void VertexBufferLayout::Push<unsigned char>(GLint count){
     m_Elements.push_back({GL_UNSIGNED_BYTE, count, GL_TRUE});
     m_Stride += VertexBufferElement::GetSizeOfType(GL_UNSIGNED_BYTE) * count;
 }
-
-
-#endif //OPENGL_VERTEXBUFFERLAYOUT_H

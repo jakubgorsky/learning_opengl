@@ -2,10 +2,7 @@
 // Created by Jakub Górski on 20/05/2022.
 //
 
-#ifndef OPENGL_VERTEXARRAY_H
-#define OPENGL_VERTEXARRAY_H
-
-#define DEF ~VertexArray()
+#pragma once
 
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
@@ -18,11 +15,8 @@ public:
 
     virtual ~VertexArray();
 
-    void AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout);
+    void AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout) const;
 
     void Bind() const;
     void Unbind() const;
 };
-
-
-#endif //OPENGL_VERTEXARRAY_H

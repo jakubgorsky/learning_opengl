@@ -1,9 +1,7 @@
 //
 // Created by Jakub Górski on 19/05/2022.
 //
-
-#ifndef OPENGL_VERTEXBUFFER_H
-#define OPENGL_VERTEXBUFFER_H
+#pragma once
 
 
 class VertexBuffer {
@@ -16,6 +14,3 @@ public:
     void Bind() const;
     void Unbind() const;
 };
-
-
-#endif //OPENGL_VERTEXBUFFER_H
