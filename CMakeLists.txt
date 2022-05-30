@@ -20,6 +20,10 @@ set(SOURCE_FILES
         src/Shader.h
         src/GLErrorHandler.cpp
         src/GLErrorHandler.h
+        src/vendor/stb_image/stb_image.h
+        src/vendor/stb_image/stb_image.cpp
+        src/Texture.cpp
+        src/Texture.h
         )
 
 

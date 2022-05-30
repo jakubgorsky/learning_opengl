@@ -105,3 +105,7 @@ unsigned int Shader::GetUniformLocation(const std::string& name) {
         return loc;
     }
 }
+
+void Shader::SetUniform1i(const std::string &name, int value) {
+    GLCall(glUniform1i(GetUniformLocation(name), value));
+}

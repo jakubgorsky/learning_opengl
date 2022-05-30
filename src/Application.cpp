@@ -8,6 +8,7 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Shader.h"
+#include "Texture.h"
 
 int main()
 {
@@ -39,13 +40,10 @@ int main()
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
         float positions[] = {
-                0.0f, 0.0f,
-                -0.6f, 0.0f,
-                -0.3f, -0.6f,
-                0.3f, -0.6f,
-                0.6f, 0.0f,
-                0.3f, 0.6f,
-                -0.3f, 0.6f
+                -0.5f, -0.5f, -0.35f, 0.0f,
+                0.5f, -0.5f, 1.0f, 0.0f,
+                0.5f, 0.5f, 1.0f, 1.0f,
+                -0.5f, 0.5f, -0.35f, 1.0f
         };
 
         unsigned int indices[] = {
@@ -62,9 +60,10 @@ int main()
         GLCall(glBindVertexArray(vao));
 
         VertexArray va;
-        VertexBuffer vb(positions, 14 * 2 * sizeof(float));
+        VertexBuffer vb(positions, 4 * 4 * sizeof(float));
 
         VertexBufferLayout layout;
+        layout.Push<float>(2);
         layout.Push<float>(2);
         va.AddBuffer(vb, layout);
 
@@ -72,8 +71,11 @@ int main()
 
         Shader shader("../res/shaders/Basic.shader");
         shader.Bind();
-
         shader.SetUniform4f("u_Color", 0.5f, 1.0f, 1.0f, 1.0f);
+
+        Texture tex("../res/textures/yerbaholic.png");
+        tex.Bind();
+        shader.SetUniform1i("u_Texture", 0);
 
         va.Unbind();
         shader.Unbind();
@@ -98,7 +100,7 @@ int main()
 
             renderer.Draw(va, ib, shader);
 
-            GLCall(glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, nullptr));
+            GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
             // rainbow effect
             if (r == 100 && g < 100 && b == 0) {
