@@ -33,61 +33,76 @@ int main()
 
     /* Make the window's context current  */
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
+    glfwSwapInterval(4);
 
     glewInit();
 
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
-        float positions[] = {
-                -0.5f, -0.5f, -0.35f, 0.0f,
-                0.5f, -0.5f, 1.0f, 0.0f,
-                0.5f, 0.5f, 1.0f, 1.0f,
-                -0.5f, 0.5f, -0.35f, 1.0f
+        float positions1[] = {
+                -0.75f, -0.75f,
+                0.25f, -0.75f,
+                0.25f, 0.25f,
+                -0.75f, 0.25f,
+        };
+        float positions2[] = {
+                0.75f, 0.75f,
+                -0.25f, 0.75f,
+                -0.25f, -0.25f,
+                0.75f, -0.25f,
         };
 
         unsigned int indices[] = {
                 0, 1, 2,
                 0, 2, 3,
-                0, 3, 4,
-                0, 4, 5,
-                0, 5, 6,
-                0, 6, 1
         };
+
+        GLCall(glEnable(GL_BLEND));
+        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
         unsigned int vao;
         GLCall(glGenVertexArrays(1, &vao));
         GLCall(glBindVertexArray(vao));
 
-        VertexArray va;
-        VertexBuffer vb(positions, 4 * 4 * sizeof(float));
+        VertexArray va1, va2;
+        VertexBuffer vb(positions1, 4 * 2 * sizeof(float));
+        VertexBuffer vb2(positions2, 4 * 2 * sizeof(float));
 
         VertexBufferLayout layout;
         layout.Push<float>(2);
-        layout.Push<float>(2);
-        va.AddBuffer(vb, layout);
+        va1.AddBuffer(vb, layout);
+        va2.AddBuffer(vb2, layout);
 
-        IndexBuffer ib(indices, 18);
+        IndexBuffer ib(indices, 6);
 
         Shader shader("../res/shaders/Basic.shader");
+        Shader shader2("../res/shaders/Basic.shader");
+        shader2.Bind();
+        shader2.SetUniform4f("u_Color", 0.0f, 0.0f, 0.0f, 0.0f);
+        shader2.Unbind();
         shader.Bind();
-        shader.SetUniform4f("u_Color", 0.5f, 1.0f, 1.0f, 1.0f);
-
-        Texture tex("../res/textures/yerbaholic.png");
-        tex.Bind();
-        shader.SetUniform1i("u_Texture", 0);
-
-        va.Unbind();
+        shader.SetUniform4f("u_Color", 0.0f, 0.0f, 0.0f, 0.0f);
         shader.Unbind();
+
+//        Texture tex("../res/textures/yerbaholic.png");
+//        tex.Bind();
+//        shader.SetUniform1i("u_Texture", 0);
+
+        va1.Unbind();
+        va2.Unbind();
         vb.Unbind();
+        vb2.Unbind();
         ib.Unbind();
 
         Renderer renderer;
 
-        int r, g, b;
-        r = 100;
-        g = 0;
-        b = 0;
+        int r1, r2, g1, g2, b1, b2;
+        r1 = 100;
+        g1 = 0;
+        b1 = 0;
+        r2 = 0;
+        g2 = 100;
+        b2 = 0;
         int increment = 5;
 
         /* Loop until the user closes the window */
@@ -96,25 +111,46 @@ int main()
             renderer.Clear();
 
             shader.Bind();
-            shader.SetUniform4f("u_Color", (float) r / 100, (float) g / 100, (float) b / 100, 1.0f);
-
-            renderer.Draw(va, ib, shader);
-
+            shader.SetUniform4f("u_Color", (float) r1 / 100, (float) g1 / 100, (float) b1 / 100, 0.33f);
+            renderer.Draw(va1, ib, shader);
             GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+            shader.Unbind();
+
+
+            shader2.Bind();
+            shader2.SetUniform4f("u_Color", (float) r2 / 100, (float) g2 / 100, (float) b2 / 100, 0.33f);
+            renderer.Draw(va2, ib, shader2);
+            GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+            shader2.Unbind();
+
 
             // rainbow effect
-            if (r == 100 && g < 100 && b == 0) {
-                g += increment;
-            } else if (r > 0 && g == 100 && b == 0) {
-                r -= increment;
-            } else if (r == 0 && g == 100 && b < 100) {
-                b += increment;
-            } else if (r == 0 && g > 0 && b == 100) {
-                g -= increment;
-            } else if (r < 100 && g == 0 && b == 100) {
-                r += increment;
-            } else if (r == 100 && g == 0 && b > 0) {
-                b -= increment;
+            if (r1 == 100 && g1 < 100 && b1 == 0) {
+                g1 += increment;
+            } else if (r1 > 0 && g1 == 100 && b1 == 0) {
+                r1 -= increment;
+            } else if (r1 == 0 && g1 == 100 && b1 < 100) {
+                b1 += increment;
+            } else if (r1 == 0&& g1 > 0 && b1 == 100) {
+                g1 -= increment;
+            } else if (r1 < 100 && g1 == 0 && b1 == 100) {
+                r1 += increment;
+            } else if (r1 == 100 && g1 == 0 && b1 > 0) {
+                b1 -= increment;
+            }
+
+            if (r2 == 100 && g2 < 100 && b2 == 0) {
+                g2 += increment;
+            } else if (r2 > 0 && g2 == 100 && b2 == 0) {
+                r2 -= increment;
+            } else if (r2 == 0 && g2 == 100 && b2 < 100) {
+                b2 += increment;
+            } else if (r2 == 0 && g2 > 0 && b2 == 100) {
+                g2 -= increment;
+            } else if (r2 < 100 && g2 == 0 && b2 == 100) {
+                r2 += increment;
+            } else if (r2 == 100 && g2 == 0 && b2 > 0) {
+                b2 -= increment;
             }
 
             /* Swap front and back buffers */
