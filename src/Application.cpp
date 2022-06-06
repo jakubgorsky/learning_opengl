@@ -10,6 +10,9 @@
 #include "Shader.h"
 #include "Texture.h"
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
 int main()
 {
     GLFWwindow* window;
@@ -40,16 +43,10 @@ int main()
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
         float positions1[] = {
-                -0.75f, -0.75f,
-                0.25f, -0.75f,
-                0.25f, 0.25f,
-                -0.75f, 0.25f,
-        };
-        float positions2[] = {
-                0.75f, 0.75f,
-                -0.25f, 0.75f,
-                -0.25f, -0.25f,
-                0.75f, -0.25f,
+                -0.5f, -0.5f, 0.0f, 0.0f,
+                0.5f, -0.5f, 1.0f, 0.0f,
+                0.5f, 0.5f, 1.0f, 1.0f,
+                -0.5f, 0.5f, 0.0f, 1.0f
         };
 
         unsigned int indices[] = {
@@ -64,34 +61,31 @@ int main()
         GLCall(glGenVertexArrays(1, &vao));
         GLCall(glBindVertexArray(vao));
 
-        VertexArray va1, va2;
-        VertexBuffer vb(positions1, 4 * 2 * sizeof(float));
-        VertexBuffer vb2(positions2, 4 * 2 * sizeof(float));
+        VertexArray va;
+        VertexBuffer vb(positions1, 4 * 4 * sizeof(float));
 
         VertexBufferLayout layout;
         layout.Push<float>(2);
-        va1.AddBuffer(vb, layout);
-        va2.AddBuffer(vb2, layout);
+        layout.Push<float>(2);
+        va.AddBuffer(vb, layout);
 
         IndexBuffer ib(indices, 6);
 
+        glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+
+
         Shader shader("../res/shaders/Basic.shader");
-        Shader shader2("../res/shaders/Basic.shader");
-        shader2.Bind();
-        shader2.SetUniform4f("u_Color", 0.0f, 0.0f, 0.0f, 0.0f);
-        shader2.Unbind();
         shader.Bind();
         shader.SetUniform4f("u_Color", 0.0f, 0.0f, 0.0f, 0.0f);
-        shader.Unbind();
+        shader.SetUniformMat4f("u_MVP", proj);
 
-//        Texture tex("../res/textures/yerbaholic.png");
-//        tex.Bind();
-//        shader.SetUniform1i("u_Texture", 0);
+        Texture tex("../res/textures/yerbaholic.png");
+        tex.Bind();
+        shader.SetUniform1i("u_Texture", 0);
 
-        va1.Unbind();
-        va2.Unbind();
+
+        va.Unbind();
         vb.Unbind();
-        vb2.Unbind();
         ib.Unbind();
 
         Renderer renderer;
@@ -111,47 +105,25 @@ int main()
             renderer.Clear();
 
             shader.Bind();
-            shader.SetUniform4f("u_Color", (float) r1 / 100, (float) g1 / 100, (float) b1 / 100, 0.33f);
-            renderer.Draw(va1, ib, shader);
+//            shader.SetUniform4f("u_Color", (float) r1 / 100, (float) g1 / 100, (float) b1 / 100, 0.33f);
+            renderer.Draw(va, ib, shader);
             GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
             shader.Unbind();
 
-
-            shader2.Bind();
-            shader2.SetUniform4f("u_Color", (float) r2 / 100, (float) g2 / 100, (float) b2 / 100, 0.33f);
-            renderer.Draw(va2, ib, shader2);
-            GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-            shader2.Unbind();
-
-
-            // rainbow effect
-            if (r1 == 100 && g1 < 100 && b1 == 0) {
-                g1 += increment;
-            } else if (r1 > 0 && g1 == 100 && b1 == 0) {
-                r1 -= increment;
-            } else if (r1 == 0 && g1 == 100 && b1 < 100) {
-                b1 += increment;
-            } else if (r1 == 0&& g1 > 0 && b1 == 100) {
-                g1 -= increment;
-            } else if (r1 < 100 && g1 == 0 && b1 == 100) {
-                r1 += increment;
-            } else if (r1 == 100 && g1 == 0 && b1 > 0) {
-                b1 -= increment;
-            }
-
-            if (r2 == 100 && g2 < 100 && b2 == 0) {
-                g2 += increment;
-            } else if (r2 > 0 && g2 == 100 && b2 == 0) {
-                r2 -= increment;
-            } else if (r2 == 0 && g2 == 100 && b2 < 100) {
-                b2 += increment;
-            } else if (r2 == 0 && g2 > 0 && b2 == 100) {
-                g2 -= increment;
-            } else if (r2 < 100 && g2 == 0 && b2 == 100) {
-                r2 += increment;
-            } else if (r2 == 100 && g2 == 0 && b2 > 0) {
-                b2 -= increment;
-            }
+//            // rainbow effect
+//            if (r1 == 100 && g1 < 100 && b1 == 0) {
+//                g1 += increment;
+//            } else if (r1 > 0 && g1 == 100 && b1 == 0) {
+//                r1 -= increment;
+//            } else if (r1 == 0 && g1 == 100 && b1 < 100) {
+//                b1 += increment;
+//            } else if (r1 == 0&& g1 > 0 && b1 == 100) {
+//                g1 -= increment;
+//            } else if (r1 < 100 && g1 == 0 && b1 == 100) {
+//                r1 += increment;
+//            } else if (r1 == 100 && g1 == 0 && b1 > 0) {
+//                b1 -= increment;
+//            }
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);

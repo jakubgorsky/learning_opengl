@@ -29,11 +29,9 @@ set(SOURCE_FILES
 
 add_compile_definitions(GLEW_STATIC)
 
-include_directories(${PROJECT_SOURCE_DIR}/Dependencies/GLFW/include)
-include_directories(${PROJECT_SOURCE_DIR}/Dependencies/GLEW/include)
+include_directories(${PROJECT_SOURCE_DIR}/Dependencies/GLFW/include ${PROJECT_SOURCE_DIR}/Dependencies/GLEW/include ${PROJECT_SOURCE_DIR}/src/vendor)
 
-link_directories(${PROJECT_SOURCE_DIR}/Dependencies/GLFW/lib-mingw)
-link_directories(${PROJECT_SOURCE_DIR}/Dependencies/GLEW/lib/Release/x64)
+link_directories(${PROJECT_SOURCE_DIR}/Dependencies/GLFW/lib-mingw ${PROJECT_SOURCE_DIR}/Dependencies/GLEW/lib/Release/x64)
 
 add_executable(OpenGL ${SOURCE_FILES})
 
