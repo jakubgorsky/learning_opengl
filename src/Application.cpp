@@ -19,6 +19,7 @@
 
 int main()
 {
+    bool vSyncOn = false;
     GLFWwindow* window;
 
     /* Initialize the library */
@@ -40,7 +41,7 @@ int main()
 
     /* Make the window's context current  */
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
+    glfwSwapInterval(vSyncOn);
 
     glewInit();
 
@@ -48,10 +49,10 @@ int main()
     {
         // img = 1293 x 1776
         float positions1[] = {
-                200.0f, 200.0f, 0.0f, 0.0f,
-                329.3f, 200.0f, 1.0f, 0.0f,
-                329.3f, 377.6f, 1.0f, 1.0f,
-                200.0f, 377.6f, 0.0f, 1.0f
+                -64.65f, -88.8f, 0.0f, 0.0f,
+                64.65f, -88.8f, 1.0f, 0.0f,
+                64.65f, 88.8f, 1.0f, 1.0f,
+                -64.65f, 88.8f, 0.0f, 1.0f
         };
 
         unsigned int indices[] = {
@@ -77,15 +78,13 @@ int main()
         IndexBuffer ib(indices, 6);
 
         glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
-        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
-        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 100, 0));
 
-        glm::mat4 mvp = proj * view * model;
+        // redundant statement, testing atm
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 
         Shader shader("../res/shaders/Basic.shader");
         shader.Bind();
         shader.SetUniform4f("u_Color", 0.0f, 0.0f, 0.0f, 0.0f);
-        shader.SetUniformMat4f("u_MVP", mvp);
 
         Texture tex("../res/textures/yerbaholic.png");
         tex.Bind();
@@ -98,7 +97,6 @@ int main()
 
         Renderer renderer;
 
-
         // IMGUI
         const char* glsl_version = "#version 330 core";
         ImGui::CreateContext();
@@ -107,18 +105,8 @@ int main()
         ImGui::StyleColorsDark();
         ImGui_ImplOpenGL3_Init(glsl_version);
 
-        bool show_demo_window = true;
-        bool show_another_window = false;
-        ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-//        int r1, r2, g1, g2, b1, b2;
-//        r1 = 100;
-//        g1 = 0;
-//        b1 = 0;
-//        r2 = 0;
-//        g2 = 100;
-//        b2 = 0;
-//        int increment = 5;
+        glm::vec3 translationA(200, 0, 0);
+        glm::vec3 translationB(400, 200, 0);
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
@@ -129,47 +117,35 @@ int main()
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
-            shader.Bind();
-//            shader.SetUniform4f("u_Color", (float) r1 / 100, (float) g1 / 100, (float) b1 / 100, 0.33f);
-            renderer.Draw(va, ib, shader);
-            GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-            shader.Unbind();
 
-            // rainbow effect
-//            if (r1 == 100 && g1 < 100 && b1 == 0) {
-//                g1 += increment;
-//            } else if (r1 > 0 && g1 == 100 && b1 == 0) {
-//                r1 -= increment;
-//            } else if (r1 == 0 && g1 == 100 && b1 < 100) {
-//                b1 += increment;
-//            } else if (r1 == 0&& g1 > 0 && b1 == 100) {
-//                g1 -= increment;
-//            } else if (r1 < 100 && g1 == 0 && b1 == 100) {
-//                r1 += increment;
-//            } else if (r1 == 100 && g1 == 0 && b1 > 0) {
-//                b1 -= increment;
-//            }
-
-            if (show_demo_window)
-                ImGui::ShowDemoWindow(&show_demo_window);
             {
-                static float f = 0.0f;
-                static int counter = 0;
+                glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
+                glm::mat4 mvp = proj * view * model;
+                shader.Bind();
+                shader.SetUniformMat4f("u_MVP", mvp);
+                renderer.Draw(va, ib, shader);
+            }
 
-                ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+            {
+                glm::mat4 model = glm::translate(glm::mat4(1.0f), translationB);
+                glm::mat4 mvp = proj * view * model;
+                shader.Bind();
+                shader.SetUniformMat4f("u_MVP", mvp);
 
-                ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-                ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-                ImGui::Checkbox("Another Window", &show_another_window);
+                renderer.Draw(va, ib, shader);
+            }
 
-                ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-                ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-                if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-                    counter++;
-                ImGui::SameLine();
-                ImGui::Text("counter = %d", counter);
-
+            {
+                ImGui::Begin("Translation settings");
+                ImGui::SliderFloat("Tranlsation Ax", &translationA.x, 0.0f, 960.0f);
+                ImGui::SliderFloat("Tranlsation Ay", &translationA.y, 0.0f, 540.0f);
+                ImGui::SliderFloat("Tranlsation Bx", &translationB.x, 0.0f, 960.0f);
+                ImGui::SliderFloat("Tranlsation By", &translationB.y, 0.0f, 540.0f);
+                ImGui::Checkbox("V-Sync", &vSyncOn);
+                if(vSyncOn)
+                    glfwSwapInterval(vSyncOn);
+                else
+                    glfwSwapInterval(0);
                 ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
                 ImGui::End();
             }
