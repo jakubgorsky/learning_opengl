@@ -5,7 +5,11 @@ set(CMAKE_CXX_STANDARD 11)
 
 add_compile_definitions(GLEW_STATIC)
 
-include_directories(${PROJECT_SOURCE_DIR}/Dependencies/GLFW/include ${PROJECT_SOURCE_DIR}/Dependencies/GLEW/include ${PROJECT_SOURCE_DIR}/src/vendor ${PROJECT_SOURCE_DIR}/src/vendor/imgui)
+include_directories(${PROJECT_SOURCE_DIR}/Dependencies/GLFW/include
+        ${PROJECT_SOURCE_DIR}/Dependencies/GLEW/include
+        ${PROJECT_SOURCE_DIR}/src/vendor
+        ${PROJECT_SOURCE_DIR}/src/vendor/imgui
+        ${PROJECT_SOURCE_DIR}/src)
 
 set(STB_IMG_FILES
         src/vendor/stb_image/stb_image.cpp
@@ -38,7 +42,8 @@ set(SOURCE_FILES
         src/Texture.h
         src/imgui_impl_glfw.cpp
         src/imgui_impl_glfw.h
-        )
+        src/tests/Test.h
+        src/tests/TestClearColor.h src/tests/TestClearColor.cpp)
 
 
 
