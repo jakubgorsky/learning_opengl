@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.21)
 project(OpenGL)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 add_compile_definitions(GLEW_STATIC)
 
-include_directories(${PROJECT_SOURCE_DIR}/Dependencies/GLFW/include ${PROJECT_SOURCE_DIR}/Dependencies/GLEW/include ${PROJECT_SOURCE_DIR}/src/vendor ${PROJECT_SOURCE_DIR}/src/vendor/imgui)
+include_directories(${PROJECT_SOURCE_DIR}/Dependencies/GLFW/include
+        ${PROJECT_SOURCE_DIR}/Dependencies/GLEW/include
+        ${PROJECT_SOURCE_DIR}/src/vendor
+        ${PROJECT_SOURCE_DIR}/src/vendor/imgui
+        ${PROJECT_SOURCE_DIR}/src)
 
 set(STB_IMG_FILES
         src/vendor/stb_image/stb_image.cpp
@@ -40,10 +44,19 @@ set(SOURCE_FILES
         src/imgui_impl_glfw.h
         )
 
+set(TEST_FRAMEWORK
+        src/tests/Test.h
+        src/tests/TestClearColor.h
+        src/tests/TestClearColor.cpp
+        src/tests/TestSquare.cpp
+        src/tests/TestSquare.h src/tests/Test.cpp
+        src/tests/TestTexture2D.cpp
+        src/tests/TestTexture2D.h)
+
 
 
 link_directories(${PROJECT_SOURCE_DIR}/Dependencies/GLFW/lib-mingw ${PROJECT_SOURCE_DIR}/Dependencies/GLEW/lib/Release/x64)
 
-add_executable(OpenGL ${SOURCE_FILES} ${EXT_LIBS})
+add_executable(OpenGL ${SOURCE_FILES} ${EXT_LIBS} ${TEST_FRAMEWORK})
 
 target_link_libraries(OpenGL glew32s glfw3 opengl32)
