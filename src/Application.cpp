@@ -18,6 +18,8 @@
 #include "imgui_impl_opengl3.h"
 
 #include "tests/TestClearColor.h"
+#include "tests/TestSquare.h"
+#include "tests/TestTexture2D.h"
 
 int main()
 {
@@ -31,7 +33,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(960, 540, "ImGui!!!!", nullptr, nullptr);
+    window = glfwCreateWindow(960, 540, "Test Framework", nullptr, nullptr);
     if (!window)
     {
         glfwTerminate();
@@ -57,26 +59,43 @@ int main()
         ImGui::StyleColorsDark();
         ImGui_ImplOpenGL3_Init(glsl_version);
 
-        test::TestClearColor testCC;
+        test::Test* currentTest = nullptr;
+        auto* testMenu = new test::TestMenu(currentTest);
+        currentTest = testMenu;
+
+        testMenu->RegisterTest<test::TestClearColor>("Clear Color");
+        testMenu->RegisterTest<test::TestSquare>("Square test");
+        testMenu->RegisterTest<test::TestTexture2D>("2D texture test");
 
         while (!glfwWindowShouldClose(window)) {
             renderer.Clear();
-
-            testCC.OnUpdate(0.0f);
-            testCC.OnRender();
 
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
-            testCC.OnImGuiRender();
+            if(currentTest){
+                currentTest->OnUpdate(0.0f);
+                currentTest->OnRender();
+                ImGui::Begin("Test");
+                if(currentTest != testMenu && ImGui::Button("<-")){
+                    delete currentTest;
+                    currentTest = testMenu;
+                }
+                currentTest->OnImGuiRender();
+                ImGui::End();
+            }
 
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
+        if (currentTest != testMenu)
+            delete testMenu;
+        delete currentTest;
     }
 
     ImGui_ImplOpenGL3_Shutdown();
